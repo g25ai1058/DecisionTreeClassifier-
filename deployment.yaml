@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: decisiontree-deployment
+
+spec:
+  replicas: 3
+
+  selector:
+    matchLabels:
+      app: decisiontree
+
+  template:
+    metadata:
+      labels:
+        app: decisiontree
+
+    spec:
+      containers:
+      - name: decisiontree
+
+        image: iitj1058/decisiontreeclassifier:v2
+
+        ports:
+        - containerPort: 5000
+        

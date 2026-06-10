@@ -1,7 +1,6 @@
-from flask import Flask, request, render_template
+from flask import Flask, render_template, request
+from sklearn.datasets import fetch_olivetti_faces
 import joblib
-import numpy as np
-from PIL import Image
 
 app = Flask(__name__)
 
@@ -13,17 +12,19 @@ def home():
 
 @app.route("/predict", methods=["POST"])
 def predict():
-    file = request.files["image"]
 
-    img = Image.open(file).convert("L")
-    img = img.resize((64, 64))
+    image_id = int(request.form["image_id"])
 
-    img = np.array(img).flatten()
-    img = img.reshape(1, -1)
+    faces = fetch_olivetti_faces()
 
-    prediction = model.predict(img)
+    sample = faces.data[image_id].reshape(1, -1)
 
-    return f"Predicted Class: {prediction[0]}"
+    prediction = model.predict(sample)[0]
+
+    return render_template(
+        "index.html",
+        prediction=f"Predicted Person ID: {prediction}"
+    )
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
